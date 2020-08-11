@@ -30,9 +30,9 @@ def run(args):
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.b, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_set, batch_size=args.b, shuffle=True)
 
-    networks = {'lenet': LeNet()}
+    # networks = {'lenet': LeNet()}
 
-    model = networks[args.net]
+    model = LeNet()
     optimizer = optim.SGD(model.parameters(), lr=args.lr)
     loss = nn.CrossEntropyLoss()
 
@@ -58,7 +58,7 @@ def run(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--network', type=str, dest='net', required=True, help='Type of network', choices=['lenet', 'vggnet', 'resnet', 'inception'])
+    # parser.add_argument('--network', type=str, dest='net', required=True, help='Type of network', choices=['lenet', 'vggnet', 'resnet', 'inception'])
     parser.add_argument('--batch_size', type=int, dest='b', required=False, default=128, help='Batch size for data loader')
     parser.add_argument('--learning_rate', type=float, dest='lr', required=False, default=1e-2, help='Learning rate for optimizer')
     parser.add_argument('--epochs', type=float, dest='e', required=False, default=100, help='Number of epochs for the training loop')
