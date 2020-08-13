@@ -152,3 +152,4 @@ fabric.properties
 
 # specific to this project
 data/
+test.py
