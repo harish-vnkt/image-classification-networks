@@ -41,14 +41,15 @@ class ResidualBlock(nn.Module):
         self.skip_connection = nn.Sequential()
         if downsample:
             self.skip_connection = nn.Sequential(
-                nn.Conv2d(self.in_channels, self.out_channels, kernel_size=1, stride=1, bias=False),
+                nn.Conv2d(self.in_channels, self.out_channels, kernel_size=1, stride=2, bias=False),
                 nn.BatchNorm2d(num_features=self.out_channels)
             )
 
     def forward(self, x):
 
         out = self.block(x)
-        out += self.skip_connection(x)
+        residual = self.skip_connection(x)
+        out += residual
         return F.relu(out)
 
 
@@ -69,7 +70,7 @@ class Resnet(nn.Module):
         self.in_channels = self.out_channels
         self.out_channels = self.in_channels * 2
 
-        for _ in range(1, n):
+        for _ in range(1, 3):
             layers.append(ResidualBlock(self.n, self.in_channels, self.out_channels, downsample=True))
             self.in_channels = self.out_channels
             self.out_channels = self.in_channels * 2
@@ -82,7 +83,7 @@ class Resnet(nn.Module):
         out = F.relu(self.batch_norm(self.conv(x)))
         out = self.residual_blocks(out)
         out = F.max_pool2d(out, 8)
-        out = out.view(64, -1)
+        out = out.view(-1, 64)
         out = self.linear(out)
         return out
 
