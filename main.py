@@ -38,6 +38,9 @@ def run_lenet(args):
     optimizer = optim.SGD(model.parameters(), lr=args.lr)
     loss = nn.CrossEntropyLoss()
 
+    checkpoints_dir = "checkpoints/lenet/"
+    final_dir = 'models/'
+
     for epoch in range(1, args.e + 1):
         loss_train = 0.0
 
@@ -60,6 +63,17 @@ def run_lenet(args):
             epoch,
             loss_train / len(train_loader)
         ))
+
+        if epoch % 10 == 0 or epoch == 0:
+
+            checkpoint_path = os.path.join(checkpoints_dir, 'epoch_' + str(epoch) + '.pt')
+            torch.save({'epoch': epoch,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict()},
+                       checkpoint_path)
+
+    model_path = os.path.join(final_dir, 'lenet.pth')
+    torch.save(model.state_dict(), model_path)
 
     model.eval()
     with torch.no_grad():
@@ -103,6 +117,9 @@ def run_resnet(args):
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=args.b, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_set, batch_size=args.b, shuffle=True)
 
+    checkpoints_dir = "checkpoints/resnet/"
+    final_dir = 'models/'
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = Resnet(3).to(device)
@@ -110,9 +127,9 @@ def run_resnet(args):
     loss = nn.CrossEntropyLoss()
 
     # learning rate should be decayed at 32k and 64k milestones
-    scheduler = MultiStepLR(optimizer, milestones=[32000, 48000], gamma=0.1)
+    scheduler = MultiStepLR(optimizer, milestones=[320, 480], gamma=0.1)
 
-    for epoch in range(0, 64000):
+    for epoch in range(0, 640):
         loss_train = 0.0
 
         for images, labels in train_loader:
@@ -135,6 +152,17 @@ def run_resnet(args):
             loss_train / len(train_loader)
         ))
         scheduler.step()
+
+        if epoch % 100 == 0 or epoch == 0:
+            checkpoint_path = os.path.join(checkpoints_dir, 'epoch_' + str(epoch) + '.pt')
+            torch.save({'epoch': epoch,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'scheduler_state_dict': scheduler.state_dict()},
+                       checkpoint_path)
+
+    model_path = os.path.join(final_dir, 'lenet.pth')
+    torch.save(model.state_dict(), model_path)
 
     model.eval()
     with torch.no_grad():
