@@ -51,6 +51,8 @@ class VGGNet(nn.Module):
         output = torch.relu(self.conv4_3(output))
         output = F.max_pool2d(output, 2)
 
+        output = output.view(-1, 512 * 2 * 2)
+
         output = torch.relu(self.linear_1(output))
         final = torch.relu(self.linear_2(output))
 
