@@ -19,6 +19,7 @@ class LeNet(nn.Module):
         output = F.max_pool2d(torch.relu(self.conv1(x)), 2)
         output = F.max_pool2d(torch.relu(self.conv2(output)), 2)
         output = torch.relu(self.conv3(output))
+        output = output.view(-1, 120)
         final = torch.relu(self.linear(output))
         return final
 
