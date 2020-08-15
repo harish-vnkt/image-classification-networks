@@ -123,7 +123,7 @@ def run_resnet(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model = Resnet(3).to(device)
-    optimizer = optim.SGD(model.parameters(), lr=0.1)
+    optimizer = optim.SGD(model.parameters(), lr=0.1, weight_decay=0.0001, momentum=0.9)
     loss = nn.CrossEntropyLoss()
 
     # learning rate should be decayed at 32k and 64k milestones
@@ -184,7 +184,7 @@ def run_resnet(args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--network', type=str, dest='net', required=True, help='Type of network', choices=['lenet', 'vggnet', 'resnet', 'inception'])
+    parser.add_argument('--network', type=str, dest='net', required=True, help='Type of network', choices=['lenet', 'resnet'])
     parser.add_argument('--batch_size', type=int, dest='b', required=False, default=128, help='Batch size for data loader')
     parser.add_argument('--learning_rate', type=float, dest='lr', required=False, default=1e-2, help='Learning rate for optimizer')
     parser.add_argument('--epochs', type=float, dest='e', required=False, default=100, help='Number of epochs for the training loop')
